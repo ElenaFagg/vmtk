@@ -85,7 +85,7 @@ class vmtkDistanceToCenterlines(pypes.pypeScript):
                 if centerlineval > 1.4 * radius:
                     centerlineArray.SetTuple1(i,1.4 * radius)
                 elif centerlineval < 0.9 * radius:
-                    centerlineArray.SetTuple1(i,radius)
+                    centerlineArray.SetTuple1(i,0.9 * radius)
                 
             self.Surface = surface
             
