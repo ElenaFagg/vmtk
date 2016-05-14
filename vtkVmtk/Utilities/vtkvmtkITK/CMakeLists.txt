@@ -10,7 +10,7 @@ if( ${VTK_VERSION_MAJOR} GREATER 5 )
       vtkWrappingPythonCore
       )
   endif(VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
-  find_package( VTK 6.2 COMPONENTS ${vtkvmtkITK_COMPONENTS} REQUIRED )
+  find_package( VTK ${VTK_VERSION_MAJOR}.${VTK_VERSION_MINOR} COMPONENTS ${vtkvmtkITK_COMPONENTS} REQUIRED )
   include( ${VTK_USE_FILE} )
   list( APPEND vtkvmtkITK_TARGET_LINK_LIBRARIES ${VTK_LIBRARIES} )
 else( ${VTK_VERSION_MAJOR} GREATER 5 )
@@ -30,9 +30,6 @@ SET(vtkvmtkITK_SRCS
     vtkvmtkITKArchetypeImageSeriesReader.cxx
     vtkvmtkITKArchetypeImageSeriesScalarReader.cxx
     vtkvmtkITKImageWriter.cxx
-    vtkvmtkITKImageToImageFilter.h
-    vtkvmtkITKImageToImageFilter2DFF.h
-    vtkvmtkITKImageToImageFilterFF.h
 )
 
 SET(VTK_VMTK_ITK_EXTRA_INCLUDES

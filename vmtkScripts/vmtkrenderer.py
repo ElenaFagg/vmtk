@@ -114,7 +114,7 @@ class vmtkRenderer(pypes.pypeScript):
         windowToImage.Update()
         self.RenderWindow.Render()
         writer = vtk.vtkPNGWriter()
-        writer.SetInput(windowToImage.GetOutput())
+        writer.SetInputConnection(windowToImage.GetOutputPort())
         writer.SetFileName(os.path.join(homeDir,fileName))
         writer.Write()
 
@@ -138,10 +138,10 @@ class vmtkRenderer(pypes.pypeScript):
             self.Renderer.RemoveActor(self.TextInputActor)
         self.RenderWindow.Render()
 
-    def KeyPressCallback(self, obj, event):
+    def CharCallback(self, obj, event):
         return
 
-    def CharCallback(self, obj, event):
+    def KeyPressCallback(self, obj, event):
         key = self.RenderWindowInteractor.GetKeySym()
         if key =='Escape':
             if self.TextInputMode:
@@ -270,8 +270,8 @@ class vmtkRenderer(pypes.pypeScript):
             self.RenderWindow.SetLineSmoothing(self.LineSmoothing)
             self.RenderWindow.SetPolygonSmoothing(self.PolygonSmoothing)
             self.RenderWindowInteractor = vtk.vtkRenderWindowInteractor()
-            if 'vtkCocoaRenderWindowInteractor' in dir(vtk) and vtk.vtkCocoaRenderWindowInteractor.SafeDownCast(self.RenderWindowInteractor):
-                self.RenderWindowInteractor = vtkvmtk.vtkvmtkCocoaRenderWindowInteractor()
+            #if 'vtkCocoaRenderWindowInteractor' in dir(vtk) and vtk.vtkCocoaRenderWindowInteractor.SafeDownCast(self.RenderWindowInteractor):
+            #    self.RenderWindowInteractor = vtkvmtk.vtkvmtkCocoaRenderWindowInteractor()
             self.RenderWindow.SetInteractor(self.RenderWindowInteractor)
             self.RenderWindowInteractor.SetInteractorStyle(vtkvmtk.vtkvmtkInteractorStyleTrackballCamera())
             self.RenderWindowInteractor.GetInteractorStyle().KeyPressActivationOff()
@@ -320,10 +320,10 @@ class vmtkRenderer(pypes.pypeScript):
         self.RenderWindowInteractor.Close()
 
     def Deallocate(self):
-        if 'vtkCocoaRenderWindowInteractor' in dir(vtk) and vtkvmtk.vtkvmtkCocoaRenderWindowInteractor.SafeDownCast(self.RenderWindowInteractor):
-            self.RenderWindowInteractor.AddObserver("TimerEvent", self.Close)
-            self.RenderWindowInteractor.CreateOneShotTimer(1)
-            self.RenderWindowInteractor.Start()
+        #if 'vtkCocoaRenderWindowInteractor' in dir(vtk) and vtkvmtk.vtkvmtkCocoaRenderWindowInteractor.SafeDownCast(self.RenderWindowInteractor):
+        #    self.RenderWindowInteractor.AddObserver("TimerEvent", self.Close)
+        #    self.RenderWindowInteractor.CreateOneShotTimer(1)
+        #    self.RenderWindowInteractor.Start()
         self.RenderWindowInteractor = None
         self.RenderWindow = None
         self.Renderer = None

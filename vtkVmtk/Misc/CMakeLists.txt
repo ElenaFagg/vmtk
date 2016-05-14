@@ -12,7 +12,7 @@ if( ${VTK_VERSION_MAJOR} GREATER 5 )
       vtkWrappingPythonCore
       )
   endif(VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
-  find_package( VTK 6.2 COMPONENTS ${VTK_VMTK_MISC_COMPONENTS} REQUIRED )
+  find_package( VTK ${VTK_VERSION_MAJOR}.${VTK_VERSION_MINOR} COMPONENTS ${VTK_VMTK_MISC_COMPONENTS} REQUIRED )
   include( ${VTK_USE_FILE} )
   list( APPEND VTK_VMTK_MISC_TARGET_LINK_LIBRARIES ${VTK_LIBRARIES} )
 else( ${VTK_VERSION_MAJOR} GREATER 5 )
@@ -40,6 +40,7 @@ SET (VTK_VMTK_MISC_SRCS
   vtkvmtkMeshVorticity.cxx
   vtkvmtkMeshWallShearRate.cxx
   vtkvmtkPolyDataNetworkExtraction.cxx
+  vtkvmtkPolyDataNormalPlaneEstimator.cxx
   vtkvmtkPolyDataKiteRemovalFilter.cxx
   vtkvmtkPolyDataSizingFunction.cxx
   vtkvmtkPolyDataToUnstructuredGridFilter.cxx
@@ -53,6 +54,7 @@ SET (VTK_VMTK_MISC_SRCS
   vtkvmtkStreamlineToParticlesFilter.cxx
   vtkvmtkSurfaceDistance.cxx
   vtkvmtkSurfaceProjection.cxx
+  vtkvmtkTopologicalSeamFilter.cxx
   vtkvmtkUnstructuredGridTetraFilter.cxx
   )
 

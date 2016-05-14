@@ -24,7 +24,6 @@ vmtksurfacecliploop = 'vmtkSurfaceClipLoop'
 
 class vmtkSurfaceClipLoop(pypes.pypeScript):
 
-
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
@@ -49,7 +48,7 @@ class vmtkSurfaceClipLoop(pypes.pypeScript):
             self.PrintError('Error: no Surface.')
 
         triangleFilter = vtk.vtkTriangleFilter()
-        triangleFilter.SetInput(self.Surface)
+        triangleFilter.SetInputData(self.Surface)
         triangleFilter.Update()
 
         self.Surface = triangleFilter.GetOutput()
@@ -121,7 +120,7 @@ class vmtkSurfaceClipLoop(pypes.pypeScript):
         Bool.AddFunction(plane)
 
         clipper=vtk.vtkClipPolyData()
-        clipper.SetInput(self.Surface)
+        clipper.SetInputData(self.Surface)
         clipper.SetClipFunction(Bool)
         clipper.GenerateClippedOutputOn()
         clipper.InsideOutOff()

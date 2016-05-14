@@ -39,6 +39,8 @@ Version:   $Revision: 1.0 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 #include "vtkSmartPointer.h"
+#include "vtkVersion.h"
+
 #include <limits>
 
 
@@ -238,7 +240,11 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
   info("Finding boundaries of input surface...");
   vtkSmartPointer<vtkvmtkPolyDataBoundaryExtractor> boundaryExtractor =
       vtkSmartPointer<vtkvmtkPolyDataBoundaryExtractor>::New();
+#if (VTK_MAJOR_VERSION <= 5)
   boundaryExtractor->SetInput(input);
+#else
+  boundaryExtractor->SetInputData(input);
+#endif
   boundaryExtractor->Update();
   vtkPolyData* boundaries = boundaryExtractor->GetOutput();
 

@@ -8,12 +8,10 @@ from setuptools import setup, find_packages
 from setuptools.command.install import install as _install
 from setuptools.command.build_py import build_py as _build
 
-VMTKPATH = "../../../vmtk-build/Install"
-
 CLASSIFIERS = ["Development Status :: 5 - Production/Stable",
                "Environment :: Console",
                "Intended Audience :: Science/Research",
-               "License :: OSI Approved :: BSD License",                
+               "License :: OSI Approved :: BSD License",
                "Operating System :: MacOS",
                "Operating System :: POSIX :: Linux",
                "Operating System :: Microsoft :: Windows :: Windows 7",
@@ -42,7 +40,7 @@ AUTHOR              = "Luca Antiga"
 AUTHOR_EMAIL        = "luca.antiga@orobix.com"
 PLATFORMS           = "Linux/MacOSX/Windows"
 ISRELEASED          = True
-VERSION             = '1.2'
+VERSION             = '1.3'
 
 def list_files(directory):
     '''A specialized version of os.walk() that list files only in the current directory
@@ -51,68 +49,55 @@ def list_files(directory):
         if root == directory:
             return [x for x in files if not (x.startswith('.')) and not (x.endswith('cmake'))]
 
-class vmtk_build(_build):
+class vmtk_build_win_i386(_build):
     '''Build vmtk libraries'''
-    
+
     def run(self):
-        #finding absolute path 
+        #finding absolute path
+        VMTKPATH = "../../../vmtk-build-i386/Install"
         vmtk_path = os.path.abspath(VMTKPATH)
-        
-        #copying install directory
-        try:
-            shutil.copytree(os.path.join(vmtk_path,'lib','vmtk','vmtk'), 'vmtk')
-        except OSError:
-            shutil.rmtree('vmtk')
-            shutil.copytree(os.path.join(vmtk_path,'lib','vmtk','vmtk'), 'vmtk')
-        try:
-            shutil.copytree(os.path.join(vmtk_path,'bin'), os.path.join('vmtk','bin'), ignore=shutil.ignore_patterns('Python'))
-        except OSError:
-            shutil.rmtree('bin')
-            shutil.copytree(os.path.join(vmtk_path,'bin'), os.path.join('vmtk','bin'), ignore=shutil.ignore_patterns('Python'))
-        
-        try:
-            shutil.copytree(os.path.join(vmtk_path,'bin','Python','vtk'), os.path.join('vmtk','vtk'))
-        except OSError:
-            shutil.rmtree('vtk')
-            shutil.copytree(os.path.join(vmtk_path,'bin','Python','vtk'), os.path.join('vmtk','vtk'))
-        
-        shutil.copytree(os.path.join(vmtk_path,'lib'), os.path.join('vmtk','lib'), symlinks=True, ignore=shutil.ignore_patterns('cmake'))
-        
-        for file_to_move in list_files(os.path.join('vmtk','lib','vmtk')):
-            shutil.copy(os.path.join('vmtk','lib','vmtk',file_to_move),os.path.join('vmtk','lib',file_to_move))
-        shutil.rmtree(os.path.join('vmtk','lib','vmtk'))
-        
-        for file_to_move in list_files(os.path.join('vmtk','lib','vtk-5.10')):
-            shutil.copy(os.path.join('vmtk','lib','vtk-5.10',file_to_move),os.path.join('vmtk','lib',file_to_move))
-        shutil.rmtree(os.path.join('vmtk','lib','vtk-5.10'))
-        
-        for file_to_move in list_files(os.path.join('vmtk')):
-            if file_to_move.endswith('.so') or file_to_move.endswith('.pyd'):
-                shutil.move(os.path.join('vmtk',file_to_move),os.path.join('vmtk','lib',file_to_move))
-        
-        for file_to_unlink in list_files(os.path.join('vmtk','lib')):
-            if file_to_unlink == 'hints':
-                os.remove(os.path.join('vmtk','lib',file_to_unlink))
-            if os.path.islink(os.path.join('vmtk','lib',file_to_unlink)):
-                os.unlink(os.path.join('vmtk','lib',file_to_unlink))
-        
+
+        shutil.copytree(os.path.join(vmtk_path,'lib','python2.7','site-packages','vmtk'), 'vmtk')
+        shutil.copytree(os.path.join(vmtk_path,'lib','python2.7','site-packages','vtk'), os.path.join('vmtk','vtk'))
+        shutil.copytree(os.path.join(vmtk_path,'lib'), os.path.join('vmtk','lib'), symlinks=True, ignore=shutil.ignore_patterns('cmake','python2.7'))
+        shutil.copytree(os.path.join(vmtk_path,'bin'), os.path.join('vmtk','bin'))
+
         if sys.platform == "win32":
             #copy favicon
             shutil.copy(os.path.join(os.getcwd(),'vmtk-icon.ico'),os.path.join('vmtk','bin','vmtk-icon.ico'))
             #copy c++ dll files
-            if 'PROGRAMFILES(X86)' in os.environ:
-                windows_architecture = 'x8664'
-                dll_zip = urllib.urlretrieve('https://dl.dropboxusercontent.com/u/13662777/x8664.zip','x8664.zip')            
-            else:
-                windows_architecture = 'i386'      
-                dll_zip = urllib.urlretrieve('https://dl.dropboxusercontent.com/u/13662777/i386.zip','i386.zip') 
+            windows_architecture = 'i386'
+            dll_zip = urllib.urlretrieve('https://s3.amazonaws.com/vmtk-installers/1.3/i386.zip','i386.zip')
             fh = open(dll_zip[0],'rb')
             z = zipfile.ZipFile(fh)
             z.extractall(os.path.join('vmtk','bin'))
             fh.close()
             os.remove(dll_zip[0])
-      
-        
+
+class vmtk_build(_build):
+    '''Build vmtk libraries'''
+
+    def run(self):
+        #finding absolute path
+        VMTKPATH = "../../../vmtk-build/Install"
+        vmtk_path = os.path.abspath(VMTKPATH)
+
+        shutil.copytree(os.path.join(vmtk_path,'lib','python2.7','site-packages','vmtk'), 'vmtk')
+        shutil.copytree(os.path.join(vmtk_path,'lib','python2.7','site-packages','vtk'), os.path.join('vmtk','vtk'))
+        shutil.copytree(os.path.join(vmtk_path,'lib'), os.path.join('vmtk','lib'), symlinks=True, ignore=shutil.ignore_patterns('cmake','python2.7'))
+        shutil.copytree(os.path.join(vmtk_path,'bin'), os.path.join('vmtk','bin'))
+
+        if sys.platform == "win32":
+            #copy favicon
+            shutil.copy(os.path.join(os.getcwd(),'vmtk-icon.ico'),os.path.join('vmtk','bin','vmtk-icon.ico'))
+            #copy c++ dll files
+            dll_zip = urllib.urlretrieve('https://s3.amazonaws.com/vmtk-installers/1.3/x8664.zip','x8664.zip')
+            fh = open(dll_zip[0],'rb')
+            z = zipfile.ZipFile(fh)
+            z.extractall(os.path.join('vmtk','bin'))
+            fh.close()
+            os.remove(dll_zip[0])
+
 setup(name=NAME,
       maintainer=MAINTAINER,
       maintainer_email=MAINTAINER_EMAIL,
@@ -126,12 +111,12 @@ setup(name=NAME,
       author_email=AUTHOR_EMAIL,
       platforms=PLATFORMS,
       version=VERSION,
-      cmdclass={'vmtk_build':vmtk_build},
+      cmdclass={'vmtk_build':vmtk_build,'vmtk_build_win_i386':vmtk_build_win_i386},
       packages = find_packages(),
       zip_safe=False,
       package_data = {
-         'vmtk': ["lib/*.so*","lib/*.*lib*","lib/*.pyd*","bin/*"],
-         'vtk': ["lib/*.so*","lib/*.pyd*"],
+         'vmtk': ["lib/*.so*","lib/*.*lib*","lib/*.pyd*","bin/*","*.pyd","*.so","vtk/*.pyd","vtk/*.so"],
+         'vtk': ["lib/*.so*","lib/*.pyd*","*.pyd","*.so"],
         },
       scripts = ['vmtk_post_install.py']
     )

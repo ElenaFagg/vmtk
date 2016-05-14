@@ -9,7 +9,13 @@ from vtkvmtkComputationalGeometryPython import *
 from vtkvmtkDifferentialGeometryPython import *
 from vtkvmtkIOPython import *
 from vtkvmtkMiscPython import *
-from vtkvmtkRenderingPython import *
+try:
+  from vtkvmtkRenderingPython import *
+except:
+  pass
 from vtkvmtkSegmentationPython import *
 from vtkvmtkITKPython import *
-
+try:
+  from vtkvmtkContribPython import *
+except:
+  pass

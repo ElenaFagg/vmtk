@@ -39,6 +39,7 @@
 #include "vtkCellData.h"
 #include "vtkGeometryFilter.h"
 #include "vtkOrderedTriangulator.h"
+#include "vtkVersion.h"
 
 #include "vtkvmtkPolyDataBoundaryExtractor.h"
 
@@ -249,13 +250,21 @@ int vtkvmtkBoundaryLayerGenerator2::RequestData(
       
       //First convert the unstructured grid to poly data
       vtkGeometryFilter *meshToSurface = vtkGeometryFilter::New();
+#if (VTK_MAJOR_VERSION <= 5)
       meshToSurface->SetInput(input);
+#else
+      meshToSurface->SetInputData(input);
+#endif
       meshToSurface->MergingOff();
       meshToSurface->Update();
       
       //Extract the open profiles
       vtkvmtkPolyDataBoundaryExtractor *openProfilesExtractor = vtkvmtkPolyDataBoundaryExtractor::New();
+#if (VTK_MAJOR_VERSION <= 5)
       openProfilesExtractor->SetInput(meshToSurface->GetOutput());
+#else
+      openProfilesExtractor->SetInputData(meshToSurface->GetOutput());
+#endif
       openProfilesExtractor->Update();
               
       //Update the openProfilesIdsArray

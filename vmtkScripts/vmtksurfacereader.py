@@ -116,7 +116,6 @@ class vmtkSurfaceReader(pypes.pypeScript):
             array.SetName(arrayName)
             array.SetNumberOfTuples(numberOfNodes)
             self.Surface.GetPointData().AddArray(array)
-        self.Surface.Update()
         data = f.read().split()
         dataCounter = 0
         for i in range(numberOfNodes):
@@ -162,7 +161,6 @@ class vmtkSurfaceReader(pypes.pypeScript):
 ##             array.SetName(arrayName)
 ##             array.SetNumberOfTuples(numberOfNodes)
 ##             self.Surface.GetPointData().AddArray(array)
-##         self.Surface.Update()
 ##         for i in range(numberOfNodes):
 ##             line = f.readline()
 ##             splitLine = line.strip().split(' ')
@@ -220,9 +218,6 @@ class vmtkSurfaceReader(pypes.pypeScript):
             self.ReadTecplotSurfaceFile()
         else:
             self.PrintError('Error: unsupported format '+ self.Format + '.')
-
-        if self.Surface.GetSource():
-            self.Surface.GetSource().UnRegisterAllOutputs()
 
         self.Output = self.Surface
 

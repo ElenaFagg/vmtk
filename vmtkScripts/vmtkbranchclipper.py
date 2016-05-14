@@ -61,9 +61,9 @@ class vmtkBranchClipper(pypes.pypeScript):
             ['InsideOut','insideout','bool',1],
             ['UseRadiusInformation','useradius','bool',1],
             ['RadiusArrayName','radiusarray','str',1],
-	    ['BlankingArrayName','blankingarray','str',1],
-	    ['CutoffRadiusFactor','cutoffradiusfactor','float',1,'(0.0,)'],
-	    ['ClipValue','clipvalue','float',1],
+            ['BlankingArrayName','blankingarray','str',1],
+            ['CutoffRadiusFactor','cutoffradiusfactor','float',1,'(0.0,)'],
+            ['ClipValue','clipvalue','float',1],
             ['Interactive','interactive','bool',1],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']
             ])
@@ -108,14 +108,14 @@ class vmtkBranchClipper(pypes.pypeScript):
             viewer.OutputText = self.OutputText
             viewer.PrintError = self.PrintError
             viewer.PringLog = self.PrintLog
-	    viewer.Display = 0
-	    viewer.Execute()         
+            viewer.Display = 0
+            viewer.Execute()         
 
             groupIdsString = self.InputText("Please input groupIds to clip:\n",self.GroupIdsValidator)
             self.GroupIds = [int(groupId) for groupId in groupIdsString.split()]
 
         clipper = vtkvmtk.vtkvmtkPolyDataCenterlineGroupsClipper()
-        clipper.SetInput(self.Surface)
+        clipper.SetInputData(self.Surface)
         clipper.SetCenterlines(self.Centerlines)
         clipper.SetCenterlineGroupIdsArrayName(self.GroupIdsArrayName)
         clipper.SetGroupIdsArrayName(self.GroupIdsArrayName)
@@ -141,14 +141,7 @@ class vmtkBranchClipper(pypes.pypeScript):
         if not self.InsideOut:
             self.Surface = clipper.GetOutput()
         else:
-            self.Surface = clipper.GetClippedOutput()
-
-        if self.Surface:
-            if self.Surface.GetSource():
-                self.Surface.GetSource().UnRegisterAllOutputs()
-
-        if self.Centerlines.GetSource():
-            self.Centerlines.GetSource().UnRegisterAllOutputs()
+            self.Surface = clipper.GetClippedOutputData()
 
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()

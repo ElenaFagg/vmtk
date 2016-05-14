@@ -25,7 +25,6 @@
 import sys
 import vtk
 import vtkvmtk
-import vtkvmtkcontrib
 
 import pypes
 
@@ -71,7 +70,7 @@ class vmtkMeshWriter2(pypes.pypeScript):
         writer = vtk.vtkUnstructuredGridWriter()
         if self.Ascii:
             writer.SetDataModeToAscii()
-        writer.SetInput(self.Mesh)
+        writer.SetInputData(self.Mesh)
         writer.SetFileName(self.OutputFileName)
         writer.Write()
 
@@ -82,7 +81,7 @@ class vmtkMeshWriter2(pypes.pypeScript):
         writer = vtk.vtkXMLUnstructuredGridWriter()
         if self.Ascii:
             writer.SetDataModeToAscii()
-        writer.SetInput(self.Mesh)
+        writer.SetInputData(self.Mesh)
         writer.SetFileName(self.OutputFileName)
         writer.Write()
 
@@ -91,7 +90,7 @@ class vmtkMeshWriter2(pypes.pypeScript):
             self.PrintError('Error: no OutputFileName.')
         self.PrintLog('Writing Xda mesh file.')
         writer = vtkvmtk.vtkvmtkXdaWriter()
-        writer.SetInput(self.Mesh)
+        writer.SetInputData(self.Mesh)
         writer.SetFileName(self.OutputFileName)
         if self.CellEntityIdsArrayName != '':
             writer.SetBoundaryDataArrayName(self.CellEntityIdsArrayName)
@@ -102,7 +101,7 @@ class vmtkMeshWriter2(pypes.pypeScript):
             self.PrintError('Error: no OutputFileName.')
         self.PrintLog('Writing FDNEUT mesh file.')
         writer = vtkvmtk.vtkvmtkFDNEUTWriter()
-        writer.SetInput(self.Mesh)
+        writer.SetInputData(self.Mesh)
         writer.SetFileName(self.OutputFileName)
         writer.Write()
 
@@ -111,7 +110,7 @@ class vmtkMeshWriter2(pypes.pypeScript):
             self.PrintError('Error: no OutputFileName.')
         self.PrintLog('Writing Tecplot file.')
         triangleFilter = vtk.vtkDataSetTriangleFilter()
-        triangleFilter.SetInput(self.Mesh)
+        triangleFilter.SetInputData(self.Mesh)
         triangleFilter.Update()
         self.Mesh = triangleFilter.GetOutput()
         f=open(self.OutputFileName, 'w')
@@ -240,8 +239,8 @@ class vmtkMeshWriter2(pypes.pypeScript):
         self.PrintLog('Writing Dolfin file.')
         if self.Compressed:
             self.OutputFileName += '.gz'
-        writer = vtkvmtkcontrib.vtkvmtkDolfinWriter2()
-        writer.SetInput(self.Mesh)
+        writer = vtkvmtk.vtkvmtkDolfinWriter2()
+        writer.SetInputData(self.Mesh)
         writer.SetFileName(self.OutputFileName)
         if self.CellEntityIdsArrayName != '':
             writer.SetCellEntityIdsArrayName(self.CellEntityIdsArrayName)
@@ -263,7 +262,7 @@ class vmtkMeshWriter2(pypes.pypeScript):
 #        return
         self.PrintLog('Writing Fluent file.')
         writer = vtkvmtk.vtkvmtkFluentWriter()
-        writer.SetInput(self.Mesh)
+        writer.SetInputData(self.Mesh)
         writer.SetFileName(self.OutputFileName)
         if self.CellEntityIdsArrayName != '':
             writer.SetBoundaryDataArrayName(self.CellEntityIdsArrayName)

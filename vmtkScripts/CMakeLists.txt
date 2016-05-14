@@ -43,7 +43,6 @@ SET(SCRIPTS_SRCS
   vmtkimagefeaturecorrection.py
   vmtkimagefeatures.py
   vmtkimageinitialization.py
-  vmtkimagelinetracer.py
   vmtkimagemipviewer.py
   vmtkimagemorphology.py
   vmtkimagenormalize.py
@@ -116,6 +115,7 @@ SET(SCRIPTS_SRCS
   vmtksurfacecurvature.py
   vmtksurfacedecimation.py
   vmtksurfacedistance.py
+  vmtksurfaceendclipper.py
   vmtksurfacekiteremoval.py
   vmtksurfaceloopextraction.py
   vmtksurfacemassproperties.py
@@ -160,7 +160,7 @@ ENDIF(NOT VMTK_SCRIPTS_INSTALL_BIN_DIR)
 
 IF(NOT VMTK_SCRIPTS_INSTALL_LIB_DIR)
   #SET(VMTK_SCRIPTS_INSTALL_LIB_DIR ${VMTK_SCRIPTS_INSTALL_ROOT}/lib/vmtk/vmtk)
-  SET(VMTK_SCRIPTS_INSTALL_LIB_DIR lib/vmtk/vmtk)
+  SET(VMTK_SCRIPTS_INSTALL_LIB_DIR lib/python2.7/site-packages/vmtk)
 ENDIF(NOT VMTK_SCRIPTS_INSTALL_LIB_DIR)
 
 FOREACH (SCRIPT_FILE  ${SCRIPTS_SRCS})
@@ -177,7 +177,7 @@ IF (NOT WIN32 AND NOT VMTK_MINIMAL_INSTALL)
 SET (STRIPPED_SCRIPTS_SRCS )
 FOREACH (SCRIPT_FILE  ${SCRIPTS_SRCS})
   STRING(REGEX REPLACE ".py$" "" STRIPPED_SCRIPT_FILE ${SCRIPT_FILE})
-  CONFIGURE_FILE(${PYPES_SOURCE_DIR}/pyperun.py ${VMTK_SCRIPTS_BINARY_DIR}/${STRIPPED_SCRIPT_FILE} COPYONLY)
+  CONFIGURE_FILE(${PYPES_SOURCE_DIR}/pyperun.py ${VMTK_SCRIPTS_BINARY_DIR}/${STRIPPED_SCRIPT_FILE})
   SET (STRIPPED_SCRIPTS_SRCS ${STRIPPED_SCRIPTS_SRCS} ${VMTK_SCRIPTS_BINARY_DIR}/${STRIPPED_SCRIPT_FILE})
 ENDFOREACH (SCRIPT_FILE)
 

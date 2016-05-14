@@ -62,10 +62,11 @@ class vmtkImageVOIPainter(pypes.pypeScript):
             ])
 
     def InteractCallback(self, obj):
-        if self.BoxWidget.GetEnabled() == 1:
-            self.BoxWidget.SetEnabled(0)
-        else:
-            self.BoxWidget.SetEnabled(1)
+        pass
+        #if self.BoxWidget.GetEnabled() == 1:
+        #    self.BoxWidget.SetEnabled(0)
+        #else:
+        #    self.BoxWidget.SetEnabled(1)
 
     def HideCube(self,object, event):
         self.CubeActor.VisibilityOff()
@@ -80,12 +81,12 @@ class vmtkImageVOIPainter(pypes.pypeScript):
 
     def Display(self):
 
-        wholeExtent = self.Image.GetWholeExtent()
+        wholeExtent = self.Image.GetExtent()
 
         picker = vtk.vtkCellPicker()
         picker.SetTolerance(0.005)
 
-        self.PlaneWidgetX.SetInput(self.Image)
+        self.PlaneWidgetX.SetInputData(self.Image)
         self.PlaneWidgetX.SetPlaneOrientationToXAxes()
         self.PlaneWidgetX.SetSliceIndex(wholeExtent[0])
         self.PlaneWidgetX.SetPicker(picker)
@@ -96,7 +97,7 @@ class vmtkImageVOIPainter(pypes.pypeScript):
             self.PlaneWidgetX.DisplayTextOff()
         self.PlaneWidgetX.On()
 
-        self.PlaneWidgetY.SetInput(self.Image)
+        self.PlaneWidgetY.SetInputData(self.Image)
         self.PlaneWidgetY.SetPlaneOrientationToYAxes()
         self.PlaneWidgetY.SetSliceIndex(wholeExtent[2])
         self.PlaneWidgetY.SetPicker(picker)
@@ -108,7 +109,7 @@ class vmtkImageVOIPainter(pypes.pypeScript):
         self.PlaneWidgetY.SetLookupTable(self.PlaneWidgetX.GetLookupTable())
         self.PlaneWidgetY.On()
 
-        self.PlaneWidgetZ.SetInput(self.Image)
+        self.PlaneWidgetZ.SetInputData(self.Image)
         self.PlaneWidgetZ.SetPlaneOrientationToZAxes()
         self.PlaneWidgetZ.SetSliceIndex(wholeExtent[4])
         self.PlaneWidgetZ.SetPicker(picker)
@@ -122,7 +123,7 @@ class vmtkImageVOIPainter(pypes.pypeScript):
 
         self.BoxWidget.SetPriority(1.0)
         self.BoxWidget.SetHandleSize(5E-3)
-        self.BoxWidget.SetInput(self.Image)
+        self.BoxWidget.SetInputData(self.Image)
         self.BoxWidget.PlaceWidget()
         self.BoxWidget.RotationEnabledOff()
         self.BoxWidget.AddObserver("StartInteractionEvent", self.HideCube)
@@ -135,7 +136,7 @@ class vmtkImageVOIPainter(pypes.pypeScript):
         polyData.ComputeBounds()
         self.CubeSource.SetBounds(polyData.GetBounds())
         cubeMapper = vtk.vtkPolyDataMapper()
-        cubeMapper.SetInput(self.CubeSource.GetOutput())
+        cubeMapper.SetInputConnection(self.CubeSource.GetOutputPort())
         self.CubeActor.SetMapper(cubeMapper)
         self.CubeActor.GetProperty().SetColor(0.6,0.6,0.2)
         self.CubeActor.GetProperty().SetOpacity(0.25)
@@ -164,7 +165,7 @@ class vmtkImageVOIPainter(pypes.pypeScript):
 
     def PaintVOI(self):
 
-        wholeExtent = self.Image.GetWholeExtent()[:]
+        wholeExtent = self.Image.GetExtent()[:]
         origin = self.Image.GetOrigin()
         spacing = self.Image.GetSpacing()
 
@@ -185,19 +186,19 @@ class vmtkImageVOIPainter(pypes.pypeScript):
         paintedVOI[5] -= wholeExtent[4]
 
         translate = vtk.vtkImageTranslateExtent()
-        translate.SetInput(self.Image)
+        translate.SetInputData(self.Image)
         translate.SetTranslation(-wholeExtent[0],-wholeExtent[2],-wholeExtent[4])
         translate.Update()
 
         imageBoxPainter = vtkvmtk.vtkvmtkImageBoxPainter()
-        imageBoxPainter.SetInput(translate.GetOutput())
+        imageBoxPainter.SetInputConnection(translate.GetOutputPort())
         imageBoxPainter.SetBoxExtent(paintedVOI)
         imageBoxPainter.SetBoxDefinitionToUseExtent()
         imageBoxPainter.SetPaintValue(self.PaintValue)
         imageBoxPainter.Update()
 
         translate = vtk.vtkImageTranslateExtent()
-        translate.SetInput(imageBoxPainter.GetOutput())
+        translate.SetInputConnection(imageBoxPainter.GetOutputPort())
         translate.SetTranslation(wholeExtent[0],wholeExtent[2],wholeExtent[4])
         translate.Update()
 

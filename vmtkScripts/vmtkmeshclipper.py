@@ -60,10 +60,11 @@ class vmtkMeshClipper(pypes.pypeScript):
             ])
 
     def InteractCallback(self, obj):
-        if self.BoxWidget.GetEnabled() == 1:
-            self.BoxWidget.SetEnabled(0)
-        else:
-            self.BoxWidget.SetEnabled(1)
+        pass
+        #if self.BoxWidget.GetEnabled() == 1:
+        #    self.BoxWidget.SetEnabled(0)
+        #else:
+        #    self.BoxWidget.SetEnabled(1)
 
     def ClipCallback(self, obj):
         if self.BoxWidget.GetEnabled() != 1:
@@ -75,14 +76,14 @@ class vmtkMeshClipper(pypes.pypeScript):
         self.Cutter.Update()
         self.Surface.DeepCopy(self.Cutter.GetOutput())
         mapper = vtk.vtkDataSetMapper()
-        mapper.SetInput(self.Mesh)
+        mapper.SetInputData(self.Mesh)
         mapper.ScalarVisibilityOff()
         self.Actor.SetMapper(mapper)
         self.BoxWidget.Off()
 
     def Display(self):
 
-      	self.BoxWidget.SetInput(self.Mesh)
+      	self.BoxWidget.SetInputData(self.Mesh)
       	self.BoxWidget.PlaceWidget()
 
         self.vmtkRenderer.Render()
@@ -93,7 +94,7 @@ class vmtkMeshClipper(pypes.pypeScript):
             self.PrintError('Error: no Mesh.')
 
         self.Clipper = vtk.vtkClipDataSet()
-        self.Clipper.SetInput(self.Mesh)
+        self.Clipper.SetInputData(self.Mesh)
         self.Clipper.GenerateClippedOutputOn()
         self.Clipper.SetInsideOut(self.InsideOut)
         
@@ -103,7 +104,7 @@ class vmtkMeshClipper(pypes.pypeScript):
             self.Clipper.SetClipFunction(self.Planes)
 
             self.Cutter = vtk.vtkCutter()
-            self.Cutter.SetInput(self.Mesh)
+            self.Cutter.SetInputData(self.Mesh)
             self.Cutter.SetCutFunction(self.Planes)
 
             self.ClippedMesh = vtk.vtkUnstructuredGrid()
@@ -117,7 +118,7 @@ class vmtkMeshClipper(pypes.pypeScript):
             self.vmtkRenderer.RegisterScript(self) 
 
             mapper = vtk.vtkDataSetMapper()
-            mapper.SetInput(self.Mesh)
+            mapper.SetInputData(self.Mesh)
             mapper.ScalarVisibilityOff()
             self.Actor = vtk.vtkActor()
             self.Actor.SetMapper(mapper)
@@ -145,7 +146,7 @@ class vmtkMeshClipper(pypes.pypeScript):
             self.Clipper.Update()
 
             self.Cutter = vtk.vtkContourFilter()
-            self.Cutter.SetInput(self.Mesh)
+            self.Cutter.SetInputData(self.Mesh)
             self.Cutter.SetValue(0,self.ClipValue)
             self.Cutter.Update()
 
@@ -153,8 +154,6 @@ class vmtkMeshClipper(pypes.pypeScript):
             self.Surface = self.Cutter.GetOutput()
             self.ClippedMesh = self.Clipper.GetClippedOutput()
         
-        if self.Mesh.GetSource():
-            self.Mesh.GetSource().UnRegisterAllOutputs()
 
 
 if __name__=='__main__':

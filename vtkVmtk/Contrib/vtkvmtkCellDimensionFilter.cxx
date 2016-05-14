@@ -32,6 +32,7 @@
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
+#include "vtkVersion.h"
 
 
 vtkStandardNewMacro(vtkvmtkCellDimensionFilter);
@@ -108,8 +109,12 @@ int vtkvmtkCellDimensionFilter::RequestData(
     
     }
   input->GetCellData()->AddArray(cellDimensionArray);
-  
+
+#if (VTK_MAJOR_VERSION <= 5) 
   Threshold->SetInput(input);
+#else
+  Threshold->SetInputData(input);
+#endif
   Threshold->SetInputArrayToProcess(0,0,0,1,"CellDimensionArray");
   Threshold->Update();
   output->DeepCopy(Threshold->GetOutput());

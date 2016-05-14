@@ -35,12 +35,16 @@
 #include "vtkFloatArray.h"
 #include "vtkDoubleArray.h"
 
-#include <vtkstd/vector>
+#include <vector>
 
 #include "vtkvmtkConstants.h"
 
-#if (VTK_MAJOR_VERSION >= 5) && (VTK_MINOR_VERSION >= 2)
+#if (VTK_MAJOR_VERSION > 5)
 #include "vtkDijkstraGraphGeodesicPath.h"
+#else
+#if (VTK_MAJOR_VERSION == 5) && (VTK_MINOR_VERSION >= 2)
+#include "vtkDijkstraGraphGeodesicPath.h"
+#endif
 #endif
 
 
@@ -110,7 +114,7 @@ int vtkvmtkPolyDataGeodesicRBFInterpolation::RequestData(
   vtkInformationVector *outputVector)
 {
 #if (VTK_MAJOR_VERSION<5) || ((VTK_MAJOR_VERSION == 5) && (VTK_MINOR_VERSION != 2) && (VTK_MINOR_VERSION<5))
-  vtkErrorMacro(<<"You must have vtk == 5.2 or vt k> =5.5 to use this feature");
+  vtkErrorMacro(<<"You must have vtk == 5.2 or vtk >= 5.5 to use this feature");
     return 1;
 #else
 
@@ -171,11 +175,15 @@ int vtkvmtkPolyDataGeodesicRBFInterpolation::RequestData(
   
   
   vtkDijkstraGraphGeodesicPath *dijkstraAlgo = vtkDijkstraGraphGeodesicPath::New();
+#if (VTK_MAJOR_VERSION <= 5)
   dijkstraAlgo->SetInput(input);
+#else
+  dijkstraAlgo->SetInputData(input);
+#endif
   dijkstraAlgo->StopWhenEndReachedOff();
   dijkstraAlgo->UseScalarWeightsOff();
   
-  vtkstd::vector<vtkDoubleArray *> geodesicDistances;
+  std::vector<vtkDoubleArray *> geodesicDistances;
   
   
   //Compute the geodesic distances
@@ -184,11 +192,7 @@ int vtkvmtkPolyDataGeodesicRBFInterpolation::RequestData(
     dijkstraAlgo->SetStartVertex(SeedIds->GetId(i));
     dijkstraAlgo->Update();
     vtkDoubleArray *seedDistances = vtkDoubleArray::New();
-#if (VTK_MINOR_VERSION < 5)
-    seedDistances->DeepCopy(dijkstraAlgo->Getd());
-#else
     dijkstraAlgo->GetCumulativeWeights(seedDistances);
-#endif
     geodesicDistances.push_back(seedDistances);
     }
     
